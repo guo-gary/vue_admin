@@ -39,6 +39,12 @@
                 <el-form-item label="帖子标题" :label-width="formLabelWidth">
                     <el-input class="custom-input" v-model="query.postTitle" placeholder="请输入帖子标题"></el-input>
                 </el-form-item>
+                <el-form-item label="圈子ID" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.circleId" placeholder="请输入圈子ID"></el-input>
+                </el-form-item>
+                <el-form-item label="圈子名称" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.circleName" placeholder="请输入圈子名称"></el-input>
+                </el-form-item>
                 <el-form-item label="分组ID" :label-width="formLabelWidth">
                     <el-input class="custom-input" v-model="query.groupId" placeholder="请输入分组ID"></el-input>
                 </el-form-item>
@@ -301,6 +307,8 @@ const resetForm = () => {
     query.postTitle = "";
     query.userId = null;
     query.isDelete = "";
+    query.circleId='';
+    query.circleName = "";
 }
 const getPosts = async () => {
     query.p = page.index + '';

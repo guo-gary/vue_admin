@@ -41,6 +41,12 @@
                 <el-form-item label="分组名称" :label-width="formLabelWidth">
                     <el-input class="custom-input" v-model="query.groupName" placeholder="请输入分组名称"></el-input>
                 </el-form-item>
+                <el-form-item label="圈子ID" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.circleId" placeholder="请输入圈子ID"></el-input>
+                </el-form-item>
+                <el-form-item label="圈子名称" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.circleName" placeholder="请输入圈子名称"></el-input>
+                </el-form-item>
                 <el-form-item label="是否删除" :label-width="formLabelWidth">
                     <el-select v-model="query.isDeleted" placeholder="请选择状态">
                         <el-option label="全部" value=""></el-option>
@@ -280,6 +286,8 @@ const resetForm = () => {
   query.groupId = null;
   query.groupName = '';
   query.isDeleted = '';
+  query.circleId='';
+  query.circleName='';
 }
 const getGroups = async () => {
   query.p = page.index + '';

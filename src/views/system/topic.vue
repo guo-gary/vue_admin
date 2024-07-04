@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TableSearch :query="query" :options="searchOpt" :search="handleSearch" :clear="resetForm"/>
+        <TableSearch :query="query" :options="searchOpt" :search="handleSearch" :clear="resetForm" />
         <div class="container">
             <TableCustom :columns="columns" :tableData="tableData" :total="page.total" :viewFunc="handleView"
                 :delFunc="handleDelete" :changePage="changePage" :editFunc="handleEdit" :refresh="refreshTable"
@@ -34,31 +34,37 @@
                 </template>
             </TableDetail>
         </el-dialog>
-  <!-- 多条件查询弹窗组件 -->
-  <el-dialog title="查询条件" v-model="visibleFind" width="30%">
-      <el-form :model="query" ref="formAddRef">
-        <el-form-item label="话题ID" :label-width="formLabelWidth">
-          <el-input class="custom-input" v-model="query.topicId" placeholder="请输入话题ID"></el-input>
-        </el-form-item>
-        <el-form-item label="话题名称" :label-width="formLabelWidth">
-          <el-input class="custom-input" v-model="query.topicName" placeholder="请输入话题名称"></el-input>
-        </el-form-item>
-        <el-form-item label="分组ID" :label-width="formLabelWidth">
-          <el-input class="custom-input" v-model="query.groupId" placeholder="请输入分组ID"></el-input>
-        </el-form-item>
-        <el-form-item label="分组名称" :label-width="formLabelWidth">
-          <el-input class="custom-input" v-model="query.groupName" placeholder="请输入分组名称"></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="resetForm()">清空</el-button>
-          <el-button type="primary" @click="handleFind()">
-            查询
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+        <!-- 多条件查询弹窗组件 -->
+        <el-dialog title="查询条件" v-model="visibleFind" width="30%">
+            <el-form :model="query" ref="formAddRef">
+                <el-form-item label="话题ID" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.topicId" placeholder="请输入话题ID"></el-input>
+                </el-form-item>
+                <el-form-item label="话题名称" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.topicName" placeholder="请输入话题名称"></el-input>
+                </el-form-item>
+                <el-form-item label="圈子ID" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.circleId" placeholder="请输入圈子ID"></el-input>
+                </el-form-item>
+                <el-form-item label="圈子名称" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.circleName" placeholder="请输入圈子名称"></el-input>
+                </el-form-item>
+                <el-form-item label="分组ID" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.groupId" placeholder="请输入分组ID"></el-input>
+                </el-form-item>
+                <el-form-item label="分组名称" :label-width="formLabelWidth">
+                    <el-input class="custom-input" v-model="query.groupName" placeholder="请输入分组名称"></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="resetForm()">清空</el-button>
+                    <el-button type="primary" @click="handleFind()">
+                        查询
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -68,7 +74,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { Request_topic, Response_topic, Data, Record, Request_topic_add, Request_topic_update, Request_topic_delete } from '@/types/topic';
 import TableCustom from '@/components/table-custom.vue';
 import TableDetail from '@/components/table-detail.vue';
-import { CirclePlusFilled ,Search} from '@element-plus/icons-vue';
+import { CirclePlusFilled, Search } from '@element-plus/icons-vue';
 import { FormOption, FormOptionList } from '@/types/form-option';
 import { deleteTopicAPI, getTopicAPI, addTopicAPI, updateTopicAPI } from '@/api/topic';
 import { ta } from 'element-plus/es/locale';
@@ -274,6 +280,9 @@ const resetForm = () => {
     query.groupName = '';
     query.topicName = '';
     query.topicId = null;
+    query.circleId = null;
+    query.circleName = '';
+
 }
 const getTopics = async () => {
     query.p = page.index;

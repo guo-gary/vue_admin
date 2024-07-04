@@ -1,14 +1,14 @@
 <template>
   <div>
-    <TableSearch :query="query" :options="searchOpt" :search="handleSearch" :clear="resetForm"/>
+    <TableSearch :query="query" :options="searchOpt" :search="handleSearch" :clear="resetForm" />
     <div class="container">
       <TableCustom :columns="columns" :tableData="tableData" :total="page.total" :viewFunc="handleView"
         :delFunc="handleDelete" :changePage="changePage" :refresh="refreshTable" :current-page="page.index"
         :page-size="page.size" rowKey="commentId" tableKey="deleteSelect" :delSelection="delSelection">
         <template #toolbarBtn>
-            <!-- <el-button type="warning" :icon="CirclePlusFilled" @click="visible = true">新增</el-button> -->
-            <el-button type="primary" :icon="Search" @click="visibleFind = true">多条件查询</el-button>
-          </template>
+          <!-- <el-button type="warning" :icon="CirclePlusFilled" @click="visible = true">新增</el-button> -->
+          <el-button type="primary" :icon="Search" @click="visibleFind = true">多条件查询</el-button>
+        </template>
         <template #status="{ rows }">
           <el-tag type="success" v-if="rows.status">启用</el-tag>
           <el-tag type="danger" v-else>禁用</el-tag>
@@ -34,6 +34,12 @@
         </el-form-item>
         <el-form-item label="评论内容" :label-width="formLabelWidth">
           <el-input class="custom-input" type="textarea" v-model="query.postComment" placeholder="请输入评论内容"></el-input>
+        </el-form-item>
+        <el-form-item label="圈子ID" :label-width="formLabelWidth">
+          <el-input class="custom-input" v-model="query.circleId" placeholder="请输入圈子ID"></el-input>
+        </el-form-item>
+        <el-form-item label="圈子名称" :label-width="formLabelWidth">
+          <el-input class="custom-input" v-model="query.circleName" placeholder="请输入圈子名称"></el-input>
         </el-form-item>
         <el-form-item label="帖子id" :label-width="formLabelWidth">
           <el-input class="custom-input" v-model="query.postId" placeholder="请输入帖子id"></el-input>
@@ -78,7 +84,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { Request_comment, Response_comment, Record } from '@/types/comment';
 import TableCustom from '@/components/table-custom.vue';
 import TableDetail from '@/components/table-detail.vue';
-import { CirclePlusFilled,Search } from '@element-plus/icons-vue';
+import { CirclePlusFilled, Search } from '@element-plus/icons-vue';
 import { FormOption, FormOptionList } from '@/types/form-option';
 import { deleteCommentAPI, getCommentAPI } from '@/api/comment';
 const formLabelWidth = '100px';
@@ -283,14 +289,16 @@ const handlePermission = (row) => {
 const resetForm = () => {
   query.groupId = null;
   query.groupName = '';
-  query.postComment='';
-  query.postCommentId=null;
-  query.postId=null;
-  query.postTitle='';
-  query.topicId=null;
-  query.topicName='';
-  query.userId=null;
-  query.userName='';
+  query.postComment = '';
+  query.postCommentId = null;
+  query.postId = null;
+  query.postTitle = '';
+  query.topicId = null;
+  query.topicName = '';
+  query.userId = null;
+  query.userName = '';
+  query.circleId = null;
+  query.circleName = '';
 }
 const getComments = async () => {
   query.p = page.index + '';
@@ -307,8 +315,8 @@ const getComments = async () => {
 }
 getComments();
 const handleFind = () => {
-    page.index = 1;
-    getComments();
+  page.index = 1;
+  getComments();
 }
 // 回调，获取单个评论信息
 //   const getOneComment = async (data) => {
