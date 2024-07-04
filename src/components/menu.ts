@@ -16,21 +16,34 @@ export const menuData: Menus[] = [
             {
                 id: '11',
                 pid: '1',
-                index: '/system-user',
-                title: '用户管理',
+                index: '/system-post',
+                title: '帖子管理',
             },
             {
                 id: '12',
                 pid: '1',
-                index: '/system-role',
-                title: '角色管理',
+                index: '/system-comment',
+                title: '评论管理',
+            },
+            {
+                id: '15',
+                pid: '1',
+                index: '/system-relyComment',
+                title: '回复管理',
             },
             {
                 id: '13',
                 pid: '1',
-                index: '/system-menu',
-                title: '菜单管理',
+                index: '/system-group',
+                title: '分组管理',
             },
+            {
+                id: '14',
+                pid: '1',
+                index: '/system-topic',
+                title: '话题管理',
+            },
+
         ],
     },
     {

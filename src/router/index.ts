@@ -3,6 +3,7 @@ import { usePermissStore } from '../store/permiss';
 import Home from '../views/home.vue';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import { useUserStore } from '@/store/user';
 
 const routes: RouteRecordRaw[] = [
     {
@@ -24,31 +25,49 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
             },
             {
-                path: '/system-user',
-                name: 'system-user',
+                path: '/system-post',
+                name: 'system-post',
                 meta: {
-                    title: '用户管理',
+                    title: '帖子管理',
                     permiss: '11',
                 },
-                component: () => import(/* webpackChunkName: "system-user" */ '../views/system/user.vue'),
+                component: () => import(/* webpackChunkName: "system-post" */ '../views/system/post.vue'),
             },
             {
-                path: '/system-role',
-                name: 'system-role',
+                path: '/system-comment',
+                name: 'system-comment',
                 meta: {
-                    title: '角色管理',
+                    title: '评论管理',
                     permiss: '12',
                 },
-                component: () => import(/* webpackChunkName: "system-role" */ '../views/system/role.vue'),
+                component: () => import(/* webpackChunkName: "system-comment" */ '../views/system/comment.vue'),
             },
             {
-                path: '/system-menu',
-                name: 'system-menu',
+                path: '/system-group',
+                name: 'system-group',
                 meta: {
-                    title: '菜单管理',
+                    title: '分组管理',
                     permiss: '13',
                 },
-                component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/menu.vue'),
+                component: () => import(/* webpackChunkName: "system-group" */ '../views/system/group.vue'),
+            },
+            {
+                path: '/system-topic',
+                name: 'system-topic',
+                meta: {
+                    title: '话题管理',
+                    permiss: '14',
+                },
+                component: () => import(/* webpackChunkName: "system-topic" */ '../views/system/topic.vue'),
+            },
+            {
+                path: '/system-relyComment',
+                name: 'system-relyComment',
+                meta: {
+                    title: '回复管理',
+                    permiss: '15',
+                },
+                component: () => import(/* webpackChunkName: "system-relyComment" */ '../views/system/relyComment.vue'),
             },
             {
                 path: '/table',
@@ -272,11 +291,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+    const userStore = useUserStore();
     NProgress.start();
-    const role = localStorage.getItem('vuems_name');
+    const token = userStore.userInfo.token;
     const permiss = usePermissStore();
 
-    if (!role && to.meta.noAuth !== true) {
+    if (!token && to.meta.noAuth !== true) {
         next('/login');
     } else if (typeof to.meta.permiss == 'string' && !permiss.key.includes(to.meta.permiss)) {
         // 如果没有权限，则进入403

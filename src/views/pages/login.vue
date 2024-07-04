@@ -6,8 +6,8 @@
                 <div class="login-title">后台管理系统</div>
             </div>
             <el-form :model="param" :rules="rules" ref="login" size="large">
-                <el-form-item prop="username">
-                    <el-input v-model="param.username" placeholder="用户名">
+                <el-form-item prop="adminName">
+                    <el-input v-model="param.adminName" placeholder="用户名">
                         <template #prepend>
                             <el-icon>
                                 <User />
@@ -15,13 +15,9 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="password">
-                    <el-input
-                        type="password"
-                        placeholder="密码"
-                        v-model="param.password"
-                        @keyup.enter="submitForm(login)"
-                    >
+                <el-form-item prop="adminPassword">
+                    <el-input type="adminPassword" placeholder="密码" v-model="param.adminPassword"
+                        @keyup.enter="submitForm(login)">
                         <template #prepend>
                             <el-icon>
                                 <Lock />
@@ -30,14 +26,14 @@
                     </el-input>
                 </el-form-item>
                 <div class="pwd-tips">
-                    <el-checkbox class="pwd-checkbox" v-model="checked" label="记住密码" />
-                    <el-link type="primary" @click="$router.push('/reset-pwd')">忘记密码</el-link>
+                    <!-- <el-checkbox class="pwd-checkbox" v-model="checked" label="记住密码" /> -->
+                    <!-- <el-link type="primary" @click="$router.push('/reset-pwd')">忘记密码</el-link> -->
                 </div>
                 <el-button class="login-btn" type="primary" size="large" @click="submitForm(login)">登录</el-button>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
-                <p class="login-text">
+                <!-- <p class="login-tips">Tips : 用户名和密码随便填。</p> -->
+                <!-- <p class="login-text">
                     没有账号？<el-link type="primary" @click="$router.push('/register')">立即注册</el-link>
-                </p>
+                </p> -->
             </el-form>
         </div>
     </div>
@@ -50,10 +46,12 @@ import { usePermissStore } from '@/store/permiss';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-
+import { loginAPI } from '@/api/login';
+import { useUserStore } from '@/store/user'
+const userStore = useUserStore();
 interface LoginInfo {
-    username: string;
-    password: string;
+    adminName: string;
+    adminPassword: string;
 }
 
 const lgStr = localStorage.getItem('login-param');
@@ -62,29 +60,40 @@ const checked = ref(lgStr ? true : false);
 
 const router = useRouter();
 const param = reactive<LoginInfo>({
-    username: defParam ? defParam.username : '',
-    password: defParam ? defParam.password : '',
+    adminName: defParam ? defParam.adminName : '',
+    adminPassword: defParam ? defParam.adminPassword : '',
 });
 
 const rules: FormRules = {
-    username: [
+    adminName: [
         {
             required: true,
             message: '请输入用户名',
             trigger: 'blur',
         },
     ],
-    password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+    adminPassword: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 };
 const permiss = usePermissStore();
 const login = ref<FormInstance>();
-const submitForm = (formEl: FormInstance | undefined) => {
+const submitForm01 = (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    formEl.validate((valid: boolean) => {
+    formEl.validate(async (valid: boolean) => {
         if (valid) {
+            // // 获取用户信息
+            // const res = await loginAPI(param);
+            // if (res.code !== 1) {
+            //     ElMessage.error(res.msg);
+            //     return;
+            // }
+            // // 登录成功提示
+            // ElMessage.success('登录成功');
+
+            // // 跳转首页逻辑
+            // signIn();
             ElMessage.success('登录成功');
-            localStorage.setItem('vuems_name', param.username);
-            const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
+            localStorage.setItem('vuems_name', param.adminName);
+            const keys = permiss.defaultList[param.adminName == 'admin' ? 'admin' : 'user'];
             permiss.handleSet(keys);
             router.push('/');
             if (checked.value) {
@@ -98,7 +107,38 @@ const submitForm = (formEl: FormInstance | undefined) => {
         }
     });
 };
+// 优化后的异步登录处理函数
+const submitForm = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return;
+    formEl.validate(async (valid: boolean) => {
+        if (valid) {
+            try {
 
+                // 获取用户信息
+                const res = await userStore.getUserInfo(param);
+                if (res.code !== 1) {
+                    ElMessage.error(res.msg);
+                    return;
+                }
+                // 登录成功提示
+                ElMessage.success('登录成功');
+                // const keys = permiss.defaultList[param.adminName == 'admin' ? 'admin' : 'user'];
+                // permiss.handleSet(keys);
+                // 跳转首页逻辑
+                router.push('/');
+            } catch (error) {
+                // 根据错误类型，提供更具体的错误提示
+                if (error.message === '用户信息不合法') {
+                    ElMessage.error('用户信息不完整或格式错误，请重新输入');
+                } else {
+                    ElMessage.error('登录失败: ' + error.message);
+                }
+            }
+        } else {
+            ElMessage.error('用户名或密码格式错误')
+        }
+    })
+};
 const tabs = useTabsStore();
 tabs.clearTabs();
 </script>

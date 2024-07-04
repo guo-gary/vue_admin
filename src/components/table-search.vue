@@ -38,15 +38,21 @@ const props = defineProps({
 	search: {
 		type: Function,
 		default: () => { }
+	},
+	clear: {
+		type: Function,
+		default: () => { }
 	}
 });
-
 const searchRef = ref<FormInstance>();
 const resetForm = (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	formEl.resetFields()
+	props.clear();
 	props.search();
+	
 }
+
 </script>
 
 <style scoped>

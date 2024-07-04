@@ -20,16 +20,12 @@
                         <i class="el-icon-lx-skin"></i>
                     </el-tooltip>
                 </div>
-                <div class="btn-icon" @click="router.push('/ucenter')">
-                    <el-tooltip
-                        effect="dark"
-                        :content="message ? `有${message}条未读消息` : `消息中心`"
-                        placement="bottom"
-                    >
+                <!-- <div class="btn-icon" @click="router.push('/ucenter')">
+                    <el-tooltip effect="dark" :content="message ? `有${message}条未读消息` : `消息中心`" placement="bottom">
                         <i class="el-icon-lx-notice"></i>
                     </el-tooltip>
                     <span class="btn-bell-badge" v-if="message"></span>
-                </div>
+                </div> -->
                 <div class="btn-icon" @click="setFullScreen">
                     <el-tooltip effect="dark" content="全屏" placement="bottom">
                         <i class="el-icon-lx-full"></i>
@@ -47,12 +43,12 @@
                     </span>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
+                            <!-- <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
                                 <el-dropdown-item>项目仓库</el-dropdown-item>
                             </a>
                             <a href="https://lin-xin.gitee.io/example/vuems-doc/" target="_blank">
                                 <el-dropdown-item>官方文档</el-dropdown-item>
-                            </a>
+                            </a> -->
                             <el-dropdown-item command="user">个人中心</el-dropdown-item>
                             <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
@@ -67,7 +63,9 @@ import { onMounted } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
-
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { useUserStore} from '@/store/user';
+const userStore = useUserStore()
 const username: string | null = localStorage.getItem('vuems_name');
 const message: number = 2;
 
@@ -87,13 +85,29 @@ onMounted(() => {
 const router = useRouter();
 const handleCommand = (command: string) => {
     if (command == 'loginout') {
-        localStorage.removeItem('vuems_name');
-        router.push('/login');
+        // localStorage.removeItem('vuems_name');
+        // router.push('/login');
+        // 处理退出登录相关的逻辑
+        confirm();
     } else if (command == 'user') {
         router.push('/ucenter');
     }
 };
-
+const confirm = async() => {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    ElMessage.success('已退出登录');
+    // 退出登录逻辑
+    userStore.clearUserInfo();
+    router.push('/login');
+  }).catch(() => {
+    ElMessage.info('已取消退出登录');
+   
+  });
+};
 const setFullScreen = () => {
     if (document.fullscreenElement) {
         document.exitFullscreen();

@@ -8,7 +8,7 @@
                 </div>
                 <div class="user-info">
                     <div class="info-name">{{ name }}</div>
-                    <div class="info-desc">
+                    <!-- <div class="info-desc">
                         <span>@lin-xin</span>
                         <el-divider direction="vertical" />
                         <el-link href="https://lin-xin.gitee.io" target="_blank">lin-xin.gitee.io</el-link>
@@ -19,48 +19,47 @@
                         <i class="el-icon-lx-qq-fill"></i>
                         <i class="el-icon-lx-facebook-fill"></i>
                         <i class="el-icon-lx-twitter-fill"></i>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="user-footer">
-                    <div class="user-footer-item">
+                    <!-- <div class="user-footer-item">
                         <el-statistic title="Follower" :value="1800" />
                     </div>
                     <div class="user-footer-item">
                         <el-statistic title="Following" :value="666" />
-                    </div>
+                    </div> -->
                     <div class="user-footer-item">
-                        <el-statistic title="Total Post" :value="888" />
+                        <!-- <el-statistic title="Total Post" :value="888" /> -->
                     </div>
                 </div>
             </el-card>
-            <el-card
-                class="user-content"
-                shadow="hover"
-                :body-style="{ padding: '20px 50px', height: '100%', boxSizing: 'border-box' }"
-            >
-                <el-tabs tab-position="left" v-model="activeName">
-                    <el-tab-pane name="label1" label="消息通知" class="user-tabpane">
+            <el-card class="user-content" shadow="hover"
+                :body-style="{ padding: '20px 50px', height: '100%', boxSizing: 'border-box' }">
+                <!-- <el-tabs tab-position="left" v-model="activeName"> -->
+                    <p>个人信息</p><br>
+                    <!-- <el-tab-pane name="label1" label="消息通知" class="user-tabpane">
                         <TabsComp />
-                    </el-tab-pane>
-                    <el-tab-pane name="label2" label="我的头像" class="user-tabpane">
+                    </el-tab-pane> -->
+                    <!-- <el-tab-pane name="label1" label="个人信息" class="user-tabpane"> -->
+                        <TableDetail :data="viewData">
+                            <template #status="{ rows }">
+                                <el-tag type="success" v-if="rows.status">启用</el-tag>
+                                <el-tag type="danger" v-else>禁用</el-tag>
+                            </template>
+                        </TableDetail>
+                    <!-- </el-tab-pane> -->
+                    <!-- <el-tab-pane name="label2" label="我的头像" class="user-tabpane">
                         <div class="crop-wrap" v-if="activeName === 'label2'">
-                            <vueCropper
-                                ref="cropper"
-                                :img="imgSrc"
-                                :autoCrop="true"
-                                :centerBox="true"
-                                :full="true"
-                                mode="contain"
-                            >
+                            <vueCropper ref="cropper" :img="imgSrc" :autoCrop="true" :centerBox="true" :full="true"
+                                mode="contain">
                             </vueCropper>
                         </div>
-                        <el-button class="crop-demo-btn" type="primary"
-                            >选择图片
+                        <el-button class="crop-demo-btn" type="primary">选择图片
                             <input class="crop-input" type="file" name="image" accept="image/*" @change="setImage" />
                         </el-button>
                         <el-button type="success" @click="saveAvatar">上传并保存</el-button>
-                    </el-tab-pane>
-                    <el-tab-pane name="label3" label="修改密码" class="user-tabpane">
+                    </el-tab-pane> -->
+                    <!-- <el-tab-pane name="label3" label="修改密码" class="user-tabpane">
                         <el-form class="w500" label-position="top">
                             <el-form-item label="旧密码：">
                                 <el-input type="password" v-model="form.old"></el-input>
@@ -75,8 +74,8 @@
                                 <el-button type="primary" @click="onSubmit">保存</el-button>
                             </el-form-item>
                         </el-form>
-                    </el-tab-pane>
-                    <el-tab-pane name="label4" label="赞赏作者" class="user-tabpane">
+                    </el-tab-pane> -->
+                    <!-- <el-tab-pane name="label4" label="赞赏作者" class="user-tabpane">
                         <div class="plugins-tips">
                             如果该框架
                             <el-link href="https://github.com/lin-xin/vue-manage-system" target="_blank"
@@ -90,8 +89,8 @@
                         <div>
                             <img src="https://lin-xin.gitee.io/images/weixin.jpg" />
                         </div>
-                    </el-tab-pane>
-                </el-tabs>
+                    </el-tab-pane> -->
+                <!-- </el-tabs> -->
             </el-card>
         </div>
     </div>
@@ -103,14 +102,65 @@ import { VueCropper } from 'vue-cropper';
 import 'vue-cropper/dist/index.css';
 import avatar from '@/assets/img/img.jpg';
 import TabsComp from '../element/tabs.vue';
+import { useUserStore } from '@/store/user';
+import TableDetail from '@/components/table-detail.vue';
+import { getUploadFileAPI } from '@/api/file';
+import CropperImage from '@/components/CropperImage.vue';
+const userStore = useUserStore();
+// const token = userStore.userInfo.token;
+const userInfo = userStore.userInfo;
+const name = userStore.userInfo.adminName;
 
-const name = localStorage.getItem('vuems_name');
+const viewData = ref({
+    row: {},
+    list: [],
+    column: 1
+});
+viewData.value.row = userInfo
+viewData.value.list = [
+    {
+        prop: 'adminId',
+        label: '管理员 ID'
+    },
+    {
+        prop: 'adminName',
+        label: '管理员名称'
+    },
+    // {
+    //     prop: 'adminPassword',
+    //     label: '管理员密码'
+    // },
+    {
+        prop: 'adminRole',
+        label: '管理员角色'
+    },
+    {
+        prop: 'adminStatus',
+        label: '管理员状态'
+    },
+    {
+        prop: 'adminIp',
+        label: '管理员 IP'
+    },
+    {
+        prop: 'adminCreator',
+        label: '管理员创建者'
+    },
+    {
+        prop: 'adminUpdateTime',
+        label: '管理员更新时间'
+    },
+    {
+        prop: 'adminCreateTime',
+        label: '管理员创建时间'
+    }
+];
 const form = reactive({
     new1: '',
     new: '',
     old: '',
 });
-const onSubmit = () => {};
+const onSubmit = () => { };
 
 const activeName = ref('label1');
 
@@ -135,9 +185,28 @@ const setImage = (e: any) => {
 const cropImage = () => {
     cropImg.value = cropper.value?.getCroppedCanvas().toDataURL();
 };
+const request = reactive({
+    file : ""
+});
+const saveAvatar = async () => {
+    cropImage();
 
-const saveAvatar = () => {
-    avatarImg.value = cropImg.value;
+    // avatarImg.value = cropImg.value;
+    // 获取裁剪后的图片数据
+    alert('dd')
+    const croppedImageData = cropImg.value;
+    request.file=croppedImageData;
+    const rea = await getUploadFileAPI(request);
+    avatarImg.value=rea.data;
+    // 发送上传请求
+    // axios.post('/file/upload', { file: croppedImageData })
+    //     .then(response => {
+    //         // 假设服务器返回图片路径
+    //         avatarImg.value = response.data.imagePath;
+    //     })
+    //     .catch(error => {
+    //         console.error(error);
+    //     });
 };
 </script>
 
@@ -258,7 +327,7 @@ const saveAvatar = () => {
     text-align: center;
 }
 
-.user-footer > div + div {
+.user-footer>div+div {
     border-left: 1px solid rgba(83, 70, 134, 0.1);
 }
 </style>
